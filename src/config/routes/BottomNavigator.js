@@ -5,12 +5,8 @@ import Room from '../../screens/Room'
 import Checkin from '../../screens/Checkin'
 import Costumer from '../../screens/Costumer'
 import Setting from '../../screens/Setting'
-import AddRoom from '../../screens/AddRoom'
-import AddCostumer from '../../screens/AddCostumer'
 import AddCheckin from '../../screens/AddCheckin'
 import Checkout from '../../screens/Checkout'
-import EditCostumer from '../../screens/EditCostumer'
-import EditRoom from '../../screens/EditRoom'
 import Icon from 'react-native-vector-icons/AntDesign';
 
 import { createStackNavigator } from 'react-navigation-stack';
@@ -23,18 +19,6 @@ const RoomStack = createStackNavigator({
     navigationOptions : {
       header : null
     }
-  },
-  AddRoom : {
-    screen : AddRoom,
-    navigationOptions : {
-      header: null
-    }
-  },
-  EditRoom : {
-    screen : EditRoom,
-    navigationOptions : {
-      header : null
-    }
   }
 
 });
@@ -42,18 +26,6 @@ const RoomStack = createStackNavigator({
 const CostumerStack = createStackNavigator({
   Costumer : {
     screen : Costumer,
-    navigationOptions : {
-      header : null
-    }
-  },
-  NewCostumer : {
-    screen : AddCostumer,
-    navigationOptions : {
-      header : null
-    }
-  },
-  EditCostumer :  {
-    screen : EditCostumer,
     navigationOptions : {
       header : null
     }

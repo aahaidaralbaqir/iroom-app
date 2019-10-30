@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import { useDispatch } from 'react-redux'
-import {setCurUser} from '../../config/redux/action'
-import {View, StyleSheet, TextInput, Text,ActivityIndicator,TouchableOpacity} from 'react-native'
-import {api} from '../../config/api'
+import { setCurUser } from '../../config/redux/action'
+import { View, StyleSheet, TextInput, Text,ActivityIndicator,TouchableOpacity } from 'react-native'
+import { api } from '../../config/api'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/AntDesign'
 
@@ -36,7 +36,7 @@ function Login(props) {
       })
       .catch(err => {
         setIsLoading(false)
-        console.log(err);
+        console.warn(err)
       });
   };
 

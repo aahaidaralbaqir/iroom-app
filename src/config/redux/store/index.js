@@ -8,7 +8,7 @@ const persistConfig = {
   key : 'root',
   storage : AsyncStorage,
   whitelist : ['auth'],
-  blacklist : ['room']
+  blacklist : ['room','costumer']
 }
 
 // Middleware: Redux Persist Persisted Reducer

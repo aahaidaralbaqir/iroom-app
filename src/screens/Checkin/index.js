@@ -1,76 +1,188 @@
 import React from 'react'
 import {
     View,
+    FlatList,
     Text,
+    TextInput,
+    Picker,
+    ActivityIndicator,
     TouchableOpacity
 } from 'react-native'
-import { fetchRoomBooked } from '../../config/redux/action'
-import { connect } from 'react-redux'
+import { fetchRoomBooked,fetchDataCostumer } from '../../config/redux/action'
+import { useDispatch,useSelector } from 'react-redux'
+import Header from '../../components/Header'
+import Title from '../../components/Title'
+import Box from '../../components/Box'
+import CostumModal from '../../components/Modal'
+import { useModal } from '../../hooks'
+import Button from '../../components/Button'
+import {api,headerOptions} from '../../config/api'
+import moment from 'moment'
+function Checkin() {
+    const [isOpen,toggle] = useModal()
 
-function RoomItemIsBooked(props) {
-    function RoomBooked() {
-        return (
-            <TouchableOpacity style={{width:'30%',backgroundColor:'silver',height:100,borderRadius:4,marginRight:10,alignItems:'center',justifyContent:'center'}} onPress={() => props.navigation.navigate('Checkout', {order_id : props.order_id,name : props.name , costumer_id : props.costumer_id,duration : props.duration,created_at : props.created_at})}>
-            <View >
-            <Text style={{color:'white',fontSize:20}}>{props.name}</Text>
-            </View>
-            </TouchableOpacity>
-        )
+    const dispatch = useDispatch()
+    const currUser  = useSelector(state => state.auth.currUser)
+    const checkin  = useSelector(state => state.room.roomIsBooked)
+    const costumer  = useSelector(state => state.costumer.costumer)
+
+    const [roomName,setRoomName] = React.useState('')
+    const [roomId,setRoomId] = React.useState(null)
+    const [orderId,setOrderId] = React.useState(null)
+    const [duration,setDuration] = React.useState(null)
+    const [costumerId,setCostumerId]  = React.useState(0)
+    const [isEdit,setIsEdit] = React.useState(false)
+    const [isLoading,setIsLoading] = React.useState(false)
+    const [count,setCount]  = React.useState(0)
+
+    const fill = (id,name,order_id,duration) => {
+        setRoomName(name)
+        setRoomId(id)
+        setOrderId(order_id)
+        setDuration(duration)
+        toggle()
     }
 
-    function RoomNotBooked(props) {
-        return (
-            <TouchableOpacity style={{width:'30%',backgroundColor:'blue',height:100,borderRadius:4,marginRight:10,alignItems:'center',justifyContent:'center'}} onPress={() => props.navigation.navigate('AddCheckin', {id : props.id,name:props.name})}>
-            <View >
-            <Text style={{color:'white',fontSize:20}}>{props.name}</Text>
-            </View>
-            </TouchableOpacity>
-        )
-    }
-    if(props.is_booked){
-        return <RoomBooked {...props} />
-    }else{
-        return <RoomNotBooked {...props} />
-    }
-}
 
-function Checkin(props) {
-    let { token } = props.currUser
+
+    const handleBoxClick = (id,name,button,is_booked,is_done,order_id,costumer_id,duration,created_at) => {
+        if(is_booked){
+        }else{
+            fill(id,name,order_id,duration)
+        }
+    }
+
+    const handleAddCheckin = () => {
+        setIsLoading(true)
+        let data = {
+            costumer_id : costumerId,
+            room_id : roomId,
+            is_booked : true,
+            is_done : false,
+            duration : duration,
+            order_end_time : Date.now()
+        }
+        api
+         .post('/checkin',data,headerOptions(currUser.token))
+         .then(result => {
+            dispatch(fetchRoomBooked(currUser.token))
+            setIsLoading(false)
+         })
+         .catch(error => {
+            alert('reservation failed')
+         })
+    }
+
+    const handleUpdateCheckin = (id) => {
+      api
+       .put(`/orders/${id}`,headerOptions(currUser.token))
+       .then(result => {
+         dispatch(fetchRoomBooked(currUser.token))
+       })
+       .catch(error => alert(JSON.stringify(error,null,2)))
+    }
+
+    const handleCheckin = () => {
+        if(isEdit){
+
+        }else{
+            handleAddCheckin()
+        }
+    }
+
     React.useEffect(() => {
-        props.fetchBooked(token)
+        dispatch(fetchRoomBooked(currUser.token))
+        dispatch(fetchDataCostumer(currUser.token))
+        setCount(1)
     },[])
 
     return (
-        <View style={{padding:20,position:'relative'}}>
-            <Text style={{fontSize:30,marginBottom:10}}>Booked Room</Text>
-            <Text style={{fontSize:19,marginBottom:10,color:'#666'}}>Lorem ipsum dolor sit atmet</Text>
-            <TouchableOpacity onPress={() => props.navigation.navigate('AddCheckin')} style={{position:'absolute',right:20,top:20,}}>
-            <View>
-            <Text style={{fontSize:17,marginTop:10}}>Reservation</Text>
-            </View>
-            </TouchableOpacity>
-            
-            <View style={{flex:1,flexDirection:'row'}}>
-               {props.room.map((item,index) => {
-                 return <RoomItemIsBooked key={index} navigation={props.navigation}  {...item} />
-               })}
-            </View>
+        <View style={{flex:1}}>
+            <Header>
+                <Title value="ALL CHECKIN" />
+            </Header>
+
+            <FlatList
+               data={checkin}
+               style={{marginHorizontal:20,marginVertical:20}}
+               renderItem={({item,index}) => {
+
+                 const active = item.is_booked ? true : false
+                 const autoCheckout = () => {
+                   if(active){
+                     let counter = 0
+                     let lefTime = moment.duration(moment(item.order_end_time).diff(moment())).asSeconds() / 60
+                     let diff = Math.round(lefTime)
+                     let toSecond = diff * 60
+                       setInterval(() => {
+                         counter++
+                         if(toSecond - counter === 0){
+                           handleUpdateCheckin(item.order_id)
+                         }
+                       },1000)
+                     }
+                 }
+
+                 return  <Box key={index} {...item} active={active} onBoxPress={handleBoxClick} handleCheckout={autoCheckout()} />
+               }}
+               keyExtractor={(item,index) => index.toString()}
+               numColumns={3}
+              />
+
+              <CostumModal
+                open={isOpen}
+                swipe={toggle}
+                height={280}
+              >
+                 <Text
+                    style={{
+                        fontSize:18,
+                        marginBottom:10,
+                        marginTop:2
+                    }}
+                >
+                    CHECKIN
+                </Text>
+                <TextInput
+                    style={{
+                        backgroundColor:'#f4f4f4',
+                        padding : 6
+                    }}
+                    value={roomName}
+                    editable={true}
+                    onChangeText={text => setRoomName(text)}
+                />
+                <Picker
+                    selectedValue={costumerId}
+                    style={{height: 50, width: '100%',backgroundColor:'#f4f4f4',marginTop:10}}
+                    onValueChange={(itemValue, itemIndex) =>
+                        setCostumerId(itemValue)
+                      }
+                >
+                {costumer.map((item,index) => (
+                    <Picker.Item label={item.name} value={item.id} />
+                ))}
+                </Picker>
+
+                <TextInput
+                    style={{
+                        backgroundColor:'#f4f4f4',
+                        padding : 6,
+                        marginTop:10
+                    }}
+                    value={duration}
+                    keyboardType='number-pad'
+                    onChangeText={text => setDuration(text)}
+                />
+                <Button
+                    text={isEdit ? 'SAVE CHANGES' : 'SAVE'}
+                    width="100%"
+                    isLoading={isLoading}
+                    onButtonPress={handleCheckin}
+                />
+              </CostumModal>
         </View>
     )
 }
 
-const mapStateToProps = state => {
-    return {
-        currUser : state.auth.currUser,
-        room : state.room.roomIsBooked
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchBooked : (token) => dispatch(fetchRoomBooked(token))
-    }
-}
-
-
-export default connect(mapStateToProps,mapDispatchToProps)(Checkin)
+export default Checkin

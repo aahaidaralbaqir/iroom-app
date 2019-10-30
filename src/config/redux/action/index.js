@@ -6,7 +6,8 @@ export const fetchDataRoom = token => {
       .get('/rooms', headerOptions(token))
       .then(result => {
         let {data} = result;
-        dispatch({type: 'SET_ROOM', payload: data});
+        let newData = [...data,{ id : Date.now(), button : true }]
+        dispatch({type: 'SET_ROOM', payload: newData});
       })
       .catch(error => {});
   };
@@ -32,6 +33,7 @@ export const fetchRoomBooked = token => {
     });
   };
 };
+
 
 export const setCurUser = objUser => {
   return {
