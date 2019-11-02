@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import { useDispatch } from 'react-redux'
 import { setCurUser } from '../../config/redux/action'
-import { View, StyleSheet, TextInput, Text,ActivityIndicator,TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TextInput, Text,ActivityIndicator,TouchableOpacity,ToastAndroid ,StatusBar} from 'react-native'
 import { api } from '../../config/api'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/AntDesign'
+import AsyncStorage from '@react-native-community/async-storage';
 
 function Login(props) {
   const [username, setUsername] = useState('')
@@ -22,8 +23,9 @@ function Login(props) {
   };
 
   const handleLoginClick = () => {
-    setIsLoading(true)
-    api
+    if(username !== "" && password !== ""){
+      setIsLoading(true)
+      api
       .post('/login', {username, password})
       .then(res => {
         let data = {
@@ -31,13 +33,24 @@ function Login(props) {
           username: res.data.username,
         };
         dispatch(setCurUser(data))
+        AsyncStorage.setItem('userData',JSON.stringify(data))
         setIsLoading(false)
         props.navigation.navigate('Checkin');
       })
       .catch(err => {
         setIsLoading(false)
-        console.warn(err)
-      });
+        alert(JSON.stringify(err,null,2))
+      })
+    }else{
+      ToastAndroid.showWithGravityAndOffset(
+        'Username and password cannot be empty!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
+    }
+
   };
 
   useEffect(() => {
@@ -70,24 +83,25 @@ function Login(props) {
         <View style={styles.form}>
           <View style={styles.formGroup}>
             <TextInput
-               style={styles.formInput} 
-               placeholder="Username" 
+               style={styles.formInput}
+               placeholder="Username"
                value={username}
                onChangeText={text => setUsername(text)}
             />
-            <Icon 
-              name="user" 
-              style={styles.formIcon} 
+            <Icon
+              name="user"
+              style={styles.formIcon}
             />
           </View>
           <View style={styles.formGroup}>
-            <TextInput 
-              style={styles.formInput} 
-              placeholder="Password" 
+            <TextInput
+              style={styles.formInput}
+              placeholder="Password"
+              secureTextEntry={true}
               onChangeText={text => setPassword(text)}
             />
-            <Icon 
-              name="key" 
+            <Icon
+              name="key"
               style={styles.formIcon}
             />
           </View>

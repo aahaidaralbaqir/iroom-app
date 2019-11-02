@@ -16,7 +16,7 @@ export default (state = initialState, action) => {
         ...state,
         roomIsBooked: action.payload,
       };
-    case 'SET_IS_LOADING':
+    case 'SET_IS_LOADING_ROOM':
       return {
         ...state,
         isLoading: action.payload,

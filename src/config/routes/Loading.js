@@ -27,8 +27,7 @@ function Loading({navigation}){
   },[])
 
   return (
-    <View style={{flex:1,backgroundColor:PRIMARY_COLOR,justifyContent:'center',alignItems:'center'}}>
-      <Text>Check is login</Text>
+    <View>
     </View>
   )
 }

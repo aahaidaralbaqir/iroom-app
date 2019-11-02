@@ -5,8 +5,8 @@ import {
 } from 'react-native'
 function Loading() {
     return (
-        <View style={{flex:1}}>
-          <ActivityIndicator color='green' size="large" />
+        <View style={{flex:1,position:'absolute'}}>
+          <ActivityIndicator color='white' size="small" style={{top:20,left:20}} />
         </View>
     )
 }

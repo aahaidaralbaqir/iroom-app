@@ -56,15 +56,8 @@ const CheckinStack = createStackNavigator({
 const SettingStack = createStackNavigator({
   Setting : {
     screen : Setting,
-    navigationOptions : ({navigation}) => {
-      return {
-        headerStyle : {
-          elevation : 0,
-          borderBottomColor : BORDER_COLOR,
-          borderWidth : BORDER_WIDTH
-        },
-        headerTitle : 'Setting',
-      }
+    navigationOptions : {
+      header : null
     }
   }
 })

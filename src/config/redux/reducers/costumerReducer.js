@@ -2,7 +2,7 @@ let initialState = {
     isLoading : false,
     costumer : []
   }
-  
+
   export default (state = initialState , action) => {
     switch (action.type) {
       case 'SET_COSTUMER' :
@@ -11,8 +11,8 @@ let initialState = {
             costumer : action.payload
           }
         break;
-  
-      case 'SET_IS_LOADING' :
+
+      case 'SET_IS_LOADING_COSTUMER' :
           return {
             ...state,
             isLoading : action.payload
@@ -21,4 +21,3 @@ let initialState = {
         return state
     }
   }
-  

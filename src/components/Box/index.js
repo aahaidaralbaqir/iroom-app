@@ -22,7 +22,7 @@ function Box({id,name,button,order_end_time,onBoxPress,active,is_booked,is_done,
 
     const title = button ? <Icon name="plus" style={{fontSize:30,color:'#dedede'}} /> : name
     return (
-        <TouchableOpacity onPress={() => onBoxPress(id,name,button,is_booked,is_done,order_id,costumer_id,duration,created_at)}>
+        <TouchableOpacity onPress={() => onBoxPress(id,name,button,is_booked,order_id,costumer_id,duration,created_at)}>
             <View style={[styles.box,{backgroundColor}]}>
                 <Text style={[styles.boxText,{color}]}>{title}</Text>
             </View>
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         marginVertical:10,
         marginHorizontal:10,
+        elevation : 2
     },
     boxText : {
         fontSize: 20,

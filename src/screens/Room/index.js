@@ -13,10 +13,11 @@ import Box  from '../../components/Box'
 import CostumModal from '../../components/Modal'
 import { useModal } from '../../hooks/'
 import Button from '../../components/Button'
+import Loading from '../Loading'
 import { api , headerOptions } from '../../config/api'
 
 function Room() {
-  
+
     const [isOpen,toggle] = useModal()
     const [isLoading,setIsLoading] = React.useState(false)
     const [roomName,setRoomName] = React.useState('')
@@ -26,7 +27,7 @@ function Room() {
     const dispatch = useDispatch()
 
     const currUser = useSelector(state => state.auth.currUser)
-    const room = useSelector(state => state.room.room)
+    const room = useSelector(state => state.room)
 
     React.useEffect(() => {
       dispatch(fetchDataRoom(currUser.token))
@@ -38,8 +39,8 @@ function Room() {
       setRoomName(name)
       setRoomId(id)
       toggle()
-    } 
-    
+    }
+
     const blank =  () => {
       setIsLoading(false)
       setIsEdit(false)
@@ -65,8 +66,8 @@ function Room() {
        .post('/rooms',dataAdd,headerOptions(currUser.token))
         .then(result => {
           let { data } = result
-          let newRoom = [...room,data]
-          dispatch({type : 'SET_ROOM' ,  payload : newRoom})
+          let newData =  [...room.room,data]
+          dispatch({type : 'SET_ROOM',payload : newData})
           blank()
         })
         .catch(err => {
@@ -90,7 +91,7 @@ function Room() {
           alert(err)
         })
     }
-    
+
     const handleRoom = () => {
       if(isEdit){
         handleEditRoom()
@@ -101,22 +102,32 @@ function Room() {
 
     return (
         <View>
-        <CostumModal 
+        <CostumModal
           open={isOpen}
           swipe={toggle}
-          height={200}
+          height={250}
         >
           <View>
             <Text
               style={{
                 fontSize:18,
                 marginBottom:10,
-                marginTop:2
+                marginTop:2,
+                alignSelf:'center',
+                fontWeight:'bold'
               }}
             >
               {isEdit ? 'EDIT ROOM' : 'ADD ROOM'}
             </Text>
-            <TextInput 
+            <Text
+              style={{
+                  marginTop:10,
+                  marginBottom:10
+              }}
+             >
+             Room Name
+             </Text>
+            <TextInput
               style={{
                 backgroundColor:'#f4f4f4',
                 padding : 6
@@ -125,21 +136,25 @@ function Room() {
               onChangeText={text => setRoomName(text)}
               maxLength={3}
             />
-            <Button 
+            <Button
               text={isEdit ? 'SAVE CHANGES' : 'SAVE'}
-              width="100%" 
-              isLoading={isLoading}  
+              width="100%"
+              isLoading={isLoading}
               onButtonPress={handleRoom}
             />
           </View>
-        </CostumModal> 
-          
+        </CostumModal>
+
         <Header>
           <Title value="ALL ROOM" />
         </Header>
+        {room.isLoading ?
+            <Loading /> :
+            null
+        }
         <View>
              <FlatList
-               data={room}
+               data={room.room}
                style={{marginHorizontal:20,marginVertical:20}}
                renderItem={({item}) => {
                    return <Box {...item} active={true} onBoxPress={handleBoxClick} />

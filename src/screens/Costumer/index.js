@@ -5,15 +5,17 @@ import{
   Text,
   FlatList
 } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
 import Header from '../../components/Header'
-import { fetchDataCostumer } from '../../config/redux/action'
 import Title from '../../components/Title'
 import Icon from 'react-native-vector-icons/AntDesign'
 import Listuser from '../../components/Listuser'
 import CostumModal from '../../components/Modal'
-import { useModal } from '../../hooks/'
 import Button from '../../components/Button'
+import Loading from  '../Loading'
+import LinearGradient from 'react-native-linear-gradient'
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchDataCostumer } from '../../config/redux/action'
+import { useModal } from '../../hooks/'
 import { api , headerOptions } from '../../config/api'
 
 function Costumer() {
@@ -26,7 +28,7 @@ function Costumer() {
   const [isLoading,setIsLoading] = React.useState(false)
 
   const currUser = useSelector(state => state.auth.currUser)
-  const costumer = useSelector(state => state.costumer.costumer)
+  const costumer = useSelector(state => state.costumer)
   const dispatch = useDispatch()
 
 
@@ -41,9 +43,10 @@ function Costumer() {
     api
     .post('/costumers',data,headerOptions(currUser.token))
     .then(result => {
-        blank()
-        let newCostumer = [...costumer,data]
+        let newCostumer = [...costumer.costumer,data]
         dispatch({type : 'SET_COSTUMER' ,  payload : newCostumer})
+        setIsLoading(false)
+        blank()
     })
     .catch(error => {
       alert(JSON.stringify(error,null,2))
@@ -61,9 +64,9 @@ function Costumer() {
     api
     .put(`/costumers/${costumerId}`,data,headerOptions(currUser.token))
     .then(result => {
-        blank()
         dispatch(fetchDataCostumer(currUser.token))
         setIsLoading(false)
+        blank()
       })
         .catch(error => {
             console.log(err)
@@ -94,19 +97,19 @@ function Costumer() {
     setPhone(phone_number)
     setIdentity(identity_number)
     toggle()
-  } 
+  }
 
   React.useEffect(() => {
     dispatch(fetchDataCostumer(currUser.token))
   },[])
 
 
-  return (     
+  return (
     <View style={{flex:1}}>
-       <CostumModal 
+       <CostumModal
           open={isOpen}
           swipe={toggle}
-          height={300}
+          height={400}
         >
           <View>
             <Text
@@ -118,7 +121,15 @@ function Costumer() {
             >
               {isEdit ? 'EDIT COSTUMER' : 'ADD COSTUMER'}
             </Text>
-            <TextInput 
+            <Text
+              style={{
+                  marginTop:10,
+                  marginBottom:10
+              }}
+             >
+             Name
+             </Text>
+            <TextInput
               style={{
                 backgroundColor:'#f4f4f4',
                 padding : 6,
@@ -127,7 +138,32 @@ function Costumer() {
               value={name}
               onChangeText={text => setName(text)}
             />
-            <TextInput 
+            <Text
+              style={{
+                  marginTop:10,
+                  marginBottom:10
+              }}
+             >
+             Identity Number
+             </Text>
+            <TextInput
+              style={{
+                backgroundColor:'#f4f4f4',
+                padding : 6
+              }}
+              value={identity}
+              onChangeText={text => setIdentity(text)}
+            />
+            <Text
+              style={{
+                  marginTop:10,
+                  marginBottom:10
+
+              }}
+             >
+             Phone Number
+             </Text>
+            <TextInput
               style={{
                 backgroundColor:'#f4f4f4',
                 padding : 6,
@@ -136,41 +172,50 @@ function Costumer() {
               value={phone}
               onChangeText={text => setPhone(text)}
             />
-            <TextInput 
-              style={{
-                backgroundColor:'#f4f4f4',
-                padding : 6
-              }}
-              value={identity}
-              onChangeText={text => setIdentity(text)}
-            />
-            <Button 
+
+            <Button
               text={isEdit ? 'SAVE CHANGES' : 'SAVE'}
-              width="100%" 
-              isLoading={isLoading}  
+              width="100%"
+              isLoading={isLoading}
               onButtonPress={handleCostumer}
             />
           </View>
-        </CostumModal> 
+        </CostumModal>
         <View style={{flex:1}}>
           <Header>
+          {costumer.isLoading ?
+              <Loading /> :
+              null
+          }
             <Title value="COSTUMER" />
-            <Icon 
-              name="plus" 
-              style={{position:'absolute',fontSize:30,color:'white',right:10,top:16}} 
-              onPress={() => toggle() } 
-            />
           </Header>
         </View>
         <View style={{flex:9,paddingTop:10}}>
             <FlatList
-              data={costumer}
+              data={costumer.costumer}
               renderItem={({item,index}) => (
                 <Listuser key={index} {...item} onPressListUser={fill} />
               )}
               keyExtractor={(item,index) => index.toString()}
             />
         </View>
+        <LinearGradient
+          start={{x: 0, y: 1}}
+          end={{x: 1, y: 0}}
+          colors={['#11998e', '#38ef7d']}
+          style={{position:'absolute',right:10,bottom:16,width:60,height:60,justifyContent:'center',alignItems:'center',borderRadius:100,elevation:2}}
+        >
+        <Icon
+          name="plus"
+          style={{
+            fontSize:30,color:'white',
+          }}
+          onPress={() => {
+              blank()
+              toggle()
+          }}
+        />
+        </LinearGradient>
     </View>
   )
 }
