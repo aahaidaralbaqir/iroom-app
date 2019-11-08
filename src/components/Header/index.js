@@ -12,7 +12,7 @@ function Header(props) {
             start={{x: 0, y: 1}}
             end={{x: 1, y: 0}}
             colors={['#11998e', '#38ef7d']}
-            style={styles.header}
+            style={[styles.header]}
         >
          {props.children}
         </LinearGradient>
@@ -24,6 +24,5 @@ export default Header
 const styles = StyleSheet.create({
     header : {
         height : 60,
-        backgroundColor : 'red'
     }
 })

@@ -12,8 +12,6 @@ export default (state = initialState , action) => {
           isLogin : true,
           currUser : action.payload
         }
-      break;
-
     case 'SET_IS_LOADING' :
         return {
           ...state,

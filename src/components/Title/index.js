@@ -13,9 +13,10 @@ export default function Title({value}) {
 const styles = StyleSheet.create({
     text : {
         alignSelf:'center',
-        color:'whitesmoke',
+        color:'white',
         fontWeight:'bold',
-        fontSize:20,
-        marginTop:20
+        fontSize:25,
+        marginTop:13,
+        fontFamily : 'Poppins-Regular'
     }
 })

@@ -5,9 +5,14 @@ import {
     Text,
     TextInput,
     Picker,
-    ActivityIndicator,
     TouchableOpacity
 } from 'react-native'
+
+import { fetchRoomBooked,fetchDataCostumer } from '../../config/redux/action'
+import { useDispatch,useSelector } from 'react-redux'
+import { useModal } from '../../hooks'
+import {api,headerOptions} from '../../config/api'
+
 import Loading from '../Loading'
 import Header from '../../components/Header'
 import Title from '../../components/Title'
@@ -15,12 +20,9 @@ import Box from '../../components/Box'
 import CostumModal from '../../components/Modal'
 import Button from '../../components/Button'
 import Icon from 'react-native-vector-icons/AntDesign'
-import { fetchRoomBooked,fetchDataCostumer } from '../../config/redux/action'
-import { useDispatch,useSelector } from 'react-redux'
-import { useModal } from '../../hooks'
-import {api,headerOptions} from '../../config/api'
 import moment from 'moment'
-
+import Bar from '../../components/Bar'
+import styles from './style'
 function Checkin(props) {
     const [isOpen,toggle] = useModal()
 
@@ -129,8 +131,9 @@ function Checkin(props) {
 
     return (
         <View style={{flex:1}}>
+            <Bar />
             <Header>
-                <Title value="ALL CHECKIN" />
+                <Title value="Checkin" />
             </Header>
             {checkin.isLoading ?
                 <Loading /> :
@@ -153,13 +156,7 @@ function Checkin(props) {
                 height={400}
               >
                  <Text
-                    style={{
-                        fontSize:18,
-                        marginBottom:10,
-                        marginTop:2,
-                        alignSelf:'center',
-                        fontWeight:'bold'
-                    }}
+                    style={styles.formTitle}
                 >
                     {isEdit ? 'CHECKOUT' : 'CHECKIN'}
                 </Text>

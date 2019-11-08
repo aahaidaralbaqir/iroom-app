@@ -187,7 +187,7 @@ function Costumer() {
               <Loading /> :
               null
           }
-            <Title value="COSTUMER" />
+            <Title value="Costumer" />
           </Header>
         </View>
         <View style={{flex:9,paddingTop:10}}>

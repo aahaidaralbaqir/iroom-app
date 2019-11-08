@@ -29,3 +29,18 @@ export const handleShare = async () => {
       alert(error.message);
    }
 }
+
+export const getRandomColor = () => {
+  let letters = '0123456789ABCDEF';
+  let color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+export const getAcronym = (str) => {
+  let string = str
+  let acronym = string.split(/\s/).reduce((response,word)=> response+=word.slice(0,1),'')
+  return acronym.toUpperCase().split("",2)
+}

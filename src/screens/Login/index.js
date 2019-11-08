@@ -1,17 +1,19 @@
 import React, {useState, useEffect} from 'react'
 import { useDispatch } from 'react-redux'
 import { setCurUser } from '../../config/redux/action'
-import { View, StyleSheet, TextInput, Text,ActivityIndicator,TouchableOpacity,ToastAndroid ,StatusBar} from 'react-native'
+import { View, TextInput, Text,ActivityIndicator,TouchableOpacity,ToastAndroid ,StatusBar} from 'react-native'
 import { api } from '../../config/api'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/AntDesign'
-import AsyncStorage from '@react-native-community/async-storage';
-
+import AsyncStorage from '@react-native-community/async-storage'
+import styles from './style'
+import Bar from '../../components/Bar'
 function Login(props) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [active, setActive] = useState(true)
   const [isLoading,setIsLoading] = useState(false)
+  
   const dispatch = useDispatch()
 
   const checkIsError = () => {
@@ -20,7 +22,7 @@ function Login(props) {
     } else {
       setActive(true);
     }
-  };
+  }
 
   const handleLoginClick = () => {
     if(username !== "" && password !== ""){
@@ -28,10 +30,12 @@ function Login(props) {
       api
       .post('/login', {username, password})
       .then(res => {
+        
         let data = {
           token: res.data.access_token,
           username: res.data.username,
-        };
+        }
+
         dispatch(setCurUser(data))
         AsyncStorage.setItem('userData',JSON.stringify(data))
         setIsLoading(false)
@@ -61,6 +65,7 @@ function Login(props) {
   return (
     <View style={{flex: 1}}>
       <View style={styles.container}>
+        <Bar />
         <LinearGradient
           start={{x: 0, y: 1}}
           end={{x: 1, y: 0}}
@@ -129,61 +134,4 @@ function Login(props) {
 
 
 export default Login
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f4f4f4',
-  },
-  lead: {
-    flex: 1.9,
-    backgroundColor: 'blue',
-    borderBottomLeftRadius: 100,
-  },
-  logo: {
-    width: 70,
-    height: 70,
-    borderWidth: 5,
-    borderColor: 'white',
-    borderRadius: 100,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    top: 60,
-  },
-  logoIcon: {
-    fontSize: 50,
-    color: 'whitesmoke',
-  },
-  form: {
-    flex: 2,
-    paddingVertical: 50,
-  },
-  formGroup: {
-    marginHorizontal: 30,
-    position: 'relative',
-    marginVertical: 10,
-  },
-  formInput: {
-    backgroundColor: 'white',
-    borderRadius: 100,
-    paddingLeft: 40,
-  },
-  formIcon: {
-    position: 'absolute',
-    top: 15,
-    left: 15,
-    fontSize: 15,
-    color: 'silver',
-    fontWeight: 'bold',
-  },
-  formButton: {
-    marginTop: 20,
-    paddingVertical: 13,
-    alignItems: 'center',
-    borderRadius: 100,
-  },
-  formButtonText: {
-    color: 'white',
-  },
-});
+

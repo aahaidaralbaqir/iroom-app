@@ -66,8 +66,7 @@ function Room() {
        .post('/rooms',dataAdd,headerOptions(currUser.token))
         .then(result => {
           let { data } = result
-          let newData =  [...room.room,data]
-          dispatch({type : 'SET_ROOM',payload : newData})
+          dispatch(fetchDataRoom(currUser.token))
           blank()
         })
         .catch(err => {
@@ -146,7 +145,7 @@ function Room() {
         </CostumModal>
 
         <Header>
-          <Title value="ALL ROOM" />
+          <Title value="Room" />
         </Header>
         {room.isLoading ?
             <Loading /> :
