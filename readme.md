@@ -115,7 +115,7 @@ Wait till the application is installed and run into your device. Now, you can ex
 
 ## Author
 
-**Tri Aginta Ginting** - [exneval](https://github.com/exneval)
+**Ahmad haidar albaqir** - [ahmadhdr](https://github.com/ahmadhdr)
 
 ## License
 
